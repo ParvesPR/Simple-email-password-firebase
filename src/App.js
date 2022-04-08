@@ -11,6 +11,8 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(false);
+  const [error, setError] = useState('');
+  const [registered, setRegistered] = useState(false)
 
   const handleEmailBlur = event => {
     setEmail(event.target.value)
@@ -18,28 +20,39 @@ function App() {
   const handlePasswordBlur = event => {
     setPassword(event.target.value)
   }
+  const handleRegisteredChange = event => {
+    setRegistered(event.target.checked);
+  }
+
   const handleSubmitBtn = event => {
+    event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
       return;
     }
+    if (!/(?=.*[!@#$&*])/.test(password)) {
+      setError('Password Should contain al least one special character');
+      return;
+    }
     setValidated(true);
+    setError('');
 
     createUserWithEmailAndPassword(auth, email, password)
       .then(result => {
         const user = result.user;
         console.log(user)
       })
-      .catch()
+      .catch(error => {
+        setError(error.message);
+      })
     event.preventDefault();
   }
   return (
     <div>
 
       <div className="registration w-50 mx-auto">
-        <h1 className="text-center">Please Resister</h1>
+        <h1 className="text-center">Please {registered ? 'Login' : 'Register'}</h1>
 
         <Form noValidate validated={validated} onSubmit={handleSubmitBtn}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -60,9 +73,14 @@ function App() {
             <Form.Control.Feedback type="invalid">
               Please Provide a valid Password
             </Form.Control.Feedback>
+            <p className="text-danger">{error}</p>
           </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            <Form.Check onChange={handleRegisteredChange} type="checkbox" label="Already Registered?" />
+          </Form.Group>
+
           <Button variant="primary" type="submit">
-            Submit
+            {registered ? 'Login' : 'Register'}
           </Button>
         </Form>
       </div>
