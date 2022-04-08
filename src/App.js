@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
@@ -52,13 +52,23 @@ function App() {
       createUserWithEmailAndPassword(auth, email, password)
         .then(result => {
           const user = result.user;
-          console.log(user)
+          console.log(user);
+          setEmail('');
+          setPassword('');
+          emailVerification();
         })
         .catch(error => {
           setError(error.message);
         })
     }
     event.preventDefault();
+  }
+
+  const emailVerification = () => {
+    sendEmailVerification(auth.currentUser)
+      .then(() => {
+        console.log('Email verification sent')
+      })
   }
   return (
     <div>
