@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
@@ -62,14 +62,21 @@ function App() {
         })
     }
     event.preventDefault();
-  }
+  };
 
   const emailVerification = () => {
     sendEmailVerification(auth.currentUser)
       .then(() => {
         console.log('Email verification sent')
       })
-  }
+  };
+
+  const resetPassword = () => {
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        console.log('email sent')
+      })
+  };
   return (
     <div>
 
@@ -100,7 +107,7 @@ function App() {
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
             <Form.Check onChange={handleRegisteredChange} type="checkbox" label="Already Registered?" />
           </Form.Group>
-
+          <Button onClick={resetPassword} variant="link">Forget Password?</Button><br />
           <Button variant="primary" type="submit">
             {registered ? 'Login' : 'Register'}
           </Button>
