@@ -10,6 +10,7 @@ const auth = getAuth(app);
 function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [validated, setValidated] = useState(false);
 
   const handleEmailBlur = event => {
     setEmail(event.target.value)
@@ -18,6 +19,14 @@ function App() {
     setPassword(event.target.value)
   }
   const handleSubmitBtn = event => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    setValidated(true);
+
     createUserWithEmailAndPassword(auth, email, password)
       .then(result => {
         const user = result.user;
@@ -31,18 +40,26 @@ function App() {
 
       <div className="registration w-50 mx-auto">
         <h1 className="text-center">Please Resister</h1>
-        <Form onSubmit={handleSubmitBtn}>
+
+        <Form noValidate validated={validated} onSubmit={handleSubmitBtn}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control onBlur={handleEmailBlur} type="email" placeholder="Enter email" />
+            <Form.Control onBlur={handleEmailBlur} type="email" placeholder="Enter email" required />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
+            <Form.Control.Feedback type="invalid">
+              Please Provide a valid Email
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control onBlur={handlePasswordBlur} type="password" placeholder="Password" />
+            <Form.Control onBlur={handlePasswordBlur} type="password" placeholder="Password" required />
+
+            <Form.Control.Feedback type="invalid">
+              Please Provide a valid Password
+            </Form.Control.Feedback>
           </Form.Group>
           <Button variant="primary" type="submit">
             Submit
